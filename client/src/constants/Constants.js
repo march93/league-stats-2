@@ -1,0 +1,1 @@
+export const SEARCH_MATCHES = "SEARCH_MATCHES";
