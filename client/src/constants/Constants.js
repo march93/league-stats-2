@@ -1,1 +1,2 @@
-export const SEARCH_MATCHES = "SEARCH_MATCHES";
+export const SEARCH_VALUE = 'SEARCH_VALUE';
+export const SEARCH_MATCHES = 'SEARCH_MATCHES';

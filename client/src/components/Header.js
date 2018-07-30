@@ -1,25 +1,95 @@
 import React, { Component } from 'react';
 import '../styles/Header.css';
+import { connect } from "react-redux";
+import { searchValue } from '../actions/Actions';
+import PropTypes from 'prop-types'
+import {withRouter} from 'react-router';
+
+const mapStateToProps = state => {
+    return { 
+        search: state.search
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        searchValue: value => dispatch(searchValue(value))
+    };
+};
 
 class Header extends Component {
-  render() {
-    return (
-        <div className="Header">
-            <nav className="navbar navbar-expand-lg navbar-light bg-light">
-                <span className="navbar-brand">League Stats</span>
-                <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-search" aria-controls="navbar-search" aria-expanded="false" aria-label="Toggle navigation">
-                    <span className="navbar-toggler-icon"></span>
-                </button>
-                <div className="collapse navbar-collapse" id="navbar-search">
-                    <form className="navbar-form ml-auto">
-                        <input type="text" className="form-control" placeholder="Search" />
-                        <button type="submit" className="btn btn-primary">Submit</button>
-                    </form>
-                </div>
-            </nav>
-        </div>
-    );
-  }
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            searchValue: ''
+        }
+
+        // Blocker to prevent double clicking
+        this.nextDisable = false;
+    }
+
+    static propTypes = {
+        match: PropTypes.object.isRequired,
+        location: PropTypes.object.isRequired,
+        history: PropTypes.object.isRequired
+    }
+
+    // Search by clicking on enter button
+    isEnterKey = (event) => {
+        if (event.key === "Enter") {
+            this.getMatches(event);
+        }
+    }
+
+    // Handle input changes
+    onChangeName = (event) => {
+        this.setState({
+            searchValue: event.target.value
+        });
+    }
+
+    getMatches = (event) => {
+        event.preventDefault();
+
+        // Call API to retrieve user's ID
+
+        this.props.history.push('/matches');
+    }
+
+    render() {
+        return (
+            <div className="Header">
+                <nav className="navbar navbar-expand-lg navbar-light bg-light">
+                    <span className="navbar-brand">League Stats</span>
+                    <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-search" aria-controls="navbar-search" aria-expanded="false" aria-label="Toggle navigation">
+                        <span className="navbar-toggler-icon"></span>
+                    </button>
+                    <div className="collapse navbar-collapse" id="navbar-search">
+                        <form className="navbar-form ml-auto">
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Search Summoner Name"
+                                defaultValue={this.props.searchedValue}
+                                onKeyPress={this.isEnterKey}
+                                onChange={this.onChangeName}     
+                            />
+                            <button
+                                type="submit"
+                                className="btn btn-primary"
+                                onClick={this.getMatches}
+                                >
+                                Submit
+                            </button>
+                        </form>
+                    </div>
+                </nav>
+            </div>
+        );
+    }
 }
 
-export default Header;
+const HeaderPage = connect(mapStateToProps, mapDispatchToProps)(Header);
+
+export default withRouter(HeaderPage)
