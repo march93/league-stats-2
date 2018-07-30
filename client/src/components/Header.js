@@ -2,24 +2,19 @@ import React, { Component } from 'react';
 import '../styles/Header.css';
 import axios from 'axios';
 import { connect } from "react-redux";
-import { searchValue, searchMatches, updateEndIndex, updateUsername } from '../actions/Actions';
+import { searchValue } from '../actions/Actions';
 import PropTypes from 'prop-types'
-import {withRouter} from 'react-router';
+import { withRouter } from 'react-router';
 
 const mapStateToProps = state => {
     return { 
-        search: state.search,
-        matches: state.matches,
-        endIndex: state.endIndex
+        search: state.search
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        searchValue: value => dispatch(searchValue(value)),
-        searchMatches: matches => dispatch(searchMatches(matches)),
-        updateEndIndex: index => dispatch(updateEndIndex(index)),
-        updateUsername: name => dispatch(updateUsername(name))
+        searchValue: value => dispatch(searchValue(value))
     };
 };
 
@@ -30,9 +25,6 @@ class Header extends Component {
         this.state = {
             searchValue: ''
         }
-
-        // Blocker to prevent double clicking
-        this.nextDisable = false;
     }
 
     // Access history props for routing as Header component is not part of <Route />
@@ -65,22 +57,12 @@ class Header extends Component {
         // Call API to retrieve user's ID
         axios.get('/v1/api/getUserID', {
                 params: {
-                    searchValue: this.state.searchValue,
-                    endIndex: this.props.endIndex
+                    searchValue: this.state.searchValue
                 }
             })
             .then((response) => {
                 // Store search value in redux
                 self.props.searchValue(self.state.searchValue);
-
-                // Update list of match IDs in redux
-                self.props.searchMatches(response.data.matches);
-
-                // Update end index to next 10
-                self.props.updateEndIndex(self.props.endIndex + 10);
-
-                // Update username in redux
-                self.props.updateUsername(response.data.name)
 
                 // Navigate to summoner info page
                 self.props.history.push('/matches/' + response.data.ID);
