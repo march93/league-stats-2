@@ -2,19 +2,23 @@ import React, { Component } from 'react';
 import '../styles/Header.css';
 import axios from 'axios';
 import { connect } from "react-redux";
-import { searchValue } from '../actions/Actions';
+import { searchValue, searchMatches, updateEndIndex } from '../actions/Actions';
 import PropTypes from 'prop-types'
 import {withRouter} from 'react-router';
 
 const mapStateToProps = state => {
     return { 
-        search: state.search
+        search: state.search,
+        matches: state.matches,
+        endIndex: state.endIndex
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        searchValue: value => dispatch(searchValue(value))
+        searchValue: value => dispatch(searchValue(value)),
+        searchMatches: matches => dispatch(searchMatches(matches)),
+        updateEndIndex: index => dispatch(updateEndIndex(index))
     };
 };
 
@@ -55,9 +59,10 @@ class Header extends Component {
         event.preventDefault();
 
         // Call API to retrieve user's ID
-        axios.get('', {
+        axios.get('/v1/api/getUserID', {
                 params: {
-                    
+                    searchValue: this.state.searchValue,
+                    endIndex: this.props.endIndex
                 }
             })
             .then(function (response) {

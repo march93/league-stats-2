@@ -1,8 +1,13 @@
-import { SEARCH_VALUE, SEARCH_MATCHES } from '../constants/Constants';
+import {
+    SEARCH_VALUE,
+    SEARCH_MATCHES,
+    UPDATE_END_INDEX
+} from '../constants/Constants';
 
 const initialState = {
     search: '',
-    matches: []
+    matches: [],
+    endIndex: 9
 };
 
 const rootReducer = (state = initialState, action) => {
@@ -11,6 +16,8 @@ const rootReducer = (state = initialState, action) => {
             return { ...state, search: action.payload };
         case SEARCH_MATCHES:
             return { ...state, matches: action.payload };
+        case UPDATE_END_INDEX:
+            return { ...state, endIndex: action. payload };
         default:
             return state;
     }

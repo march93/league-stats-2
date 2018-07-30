@@ -1,2 +1,3 @@
 export const SEARCH_VALUE = 'SEARCH_VALUE';
 export const SEARCH_MATCHES = 'SEARCH_MATCHES';
+export const UPDATE_END_INDEX = 'UPDATE_END_INDEX';
