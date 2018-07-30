@@ -1,0 +1,9 @@
+.navbar-form {
+    display: flex;
+    flex-direction: row;
+    margin: 7px 5px;
+}
+
+.navbar-form input {
+    margin-right: 5px;
+}

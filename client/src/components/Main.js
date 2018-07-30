@@ -5,7 +5,7 @@ import Matchlist from './Matchlist';
 const Main = () => (
   <main>
     <Switch>
-      <Route exact path='/' component={Matchlist}/>
+      <Route exact path='/matches/:id' component={Matchlist}/>
     </Switch>
   </main>
 )
