@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import '../styles/Header.css';
 import axios from 'axios';
 import { connect } from "react-redux";
-import { searchValue, searchMatches, updateEndIndex } from '../actions/Actions';
+import { searchValue, searchMatches, updateEndIndex, updateUsername } from '../actions/Actions';
 import PropTypes from 'prop-types'
 import {withRouter} from 'react-router';
 
@@ -18,7 +18,8 @@ const mapDispatchToProps = dispatch => {
     return {
         searchValue: value => dispatch(searchValue(value)),
         searchMatches: matches => dispatch(searchMatches(matches)),
-        updateEndIndex: index => dispatch(updateEndIndex(index))
+        updateEndIndex: index => dispatch(updateEndIndex(index)),
+        updateUsername: name => dispatch(updateUsername(name))
     };
 };
 
@@ -58,6 +59,9 @@ class Header extends Component {
     getMatches = (event) => {
         event.preventDefault();
 
+        // Reference context
+        const self = this;
+
         // Call API to retrieve user's ID
         axios.get('/v1/api/getUserID', {
                 params: {
@@ -65,14 +69,25 @@ class Header extends Component {
                     endIndex: this.props.endIndex
                 }
             })
-            .then(function (response) {
-                console.log(response);
+            .then((response) => {
+                // Store search value in redux
+                self.props.searchValue(self.state.searchValue);
+
+                // Update list of match IDs in redux
+                self.props.searchMatches(response.data.matches);
+
+                // Update end index to next 10
+                self.props.updateEndIndex(self.props.endIndex + 10);
+
+                // Update username in redux
+                self.props.updateUsername(response.data.name)
+
+                // Navigate to summoner info page
+                self.props.history.push('/matches/' + response.data.ID);
             })
-            .catch(function (error) {
+            .catch((error) => {
                 console.log(error);
             });
-
-        this.props.history.push('/matches');
     }
 
     render() {

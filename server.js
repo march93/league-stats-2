@@ -45,7 +45,7 @@ app.get('/v1/api/getUserID', (req, res) => {
         // Return 10 matches at a time
         axios.get('https://na1.api.riotgames.com/lol/match/v3/matchlists/by-account/' + response.data.accountId, {
             params: {
-                beginIndex: req.query.endIndex - 9,
+                beginIndex: req.query.endIndex - 10,
                 endIndex: req.query.endIndex,
                 api_key: key
             }
@@ -57,20 +57,36 @@ app.get('/v1/api/getUserID', (req, res) => {
             if (response.data.matches.length === 0) {
                 res.send(data);
             } else {
-
-                // Set array of promises to be run
-                const promiseArr = [];
-
-                // Get match info for each match ID
+                // Add match ID to data.matches array
                 response.data.matches.forEach((match) => {
-                    
-                })
+                    data.matches.push(match.gameId);
+                });
+
+                res.send(data);
             }
         })
     })
     .catch((error) => {
         console.log(error);
     });
+});
+
+app.get('/v1/api/getMatches', (req, res) => {
+    // Use User ID to get list of recent matches
+    // Return 10 matches at a time
+    // axios.get('https://na1.api.riotgames.com/lol/match/v3/matchlists/by-account/' + req.query.userID, {
+    //     params: {
+    //         beginIndex: req.query.endIndex - 10,
+    //         endIndex: req.query.endIndex,
+    //         api_key: key
+    //     }
+    // })
+    // .then((response) => {
+
+    // })
+    // .catch((error) => {
+    //     console.log(error);
+    // })
 });
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
