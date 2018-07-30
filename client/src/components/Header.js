@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import '../styles/Header.css';
+import axios from 'axios';
 import { connect } from "react-redux";
 import { searchValue } from '../actions/Actions';
 import PropTypes from 'prop-types'
@@ -29,6 +30,7 @@ class Header extends Component {
         this.nextDisable = false;
     }
 
+    // Access history props for routing as Header component is not part of <Route />
     static propTypes = {
         match: PropTypes.object.isRequired,
         location: PropTypes.object.isRequired,
@@ -53,6 +55,17 @@ class Header extends Component {
         event.preventDefault();
 
         // Call API to retrieve user's ID
+        axios.get('', {
+                params: {
+                    
+                }
+            })
+            .then(function (response) {
+                console.log(response);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
 
         this.props.history.push('/matches');
     }
@@ -70,7 +83,7 @@ class Header extends Component {
                             <input
                                 type="text"
                                 className="form-control"
-                                placeholder="Search Summoner Name"
+                                placeholder="Search Summoner's Name"
                                 defaultValue={this.props.searchedValue}
                                 onKeyPress={this.isEnterKey}
                                 onChange={this.onChangeName}     
