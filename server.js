@@ -8,15 +8,17 @@ const app = express();
 const port = process.env.PORT || 5000;
 const key = process.env.REACT_APP_API_KEY;
 let champList;
+let itemList;
 
 getChampions = () => {
-    // Call League API to get champion name
+    // Call League API to get champion names
     axios.get('https://na1.api.riotgames.com/lol/static-data/v3/champions', {
         params: {
             api_key: key
         }
     })
     .then((response) => {
+        // Change to array
         champList = Object.values(response.data.data);
     })
     .catch((error) => {
@@ -24,6 +26,23 @@ getChampions = () => {
     });
 }
 getChampions();
+
+getItems = () => {
+    // Call League API to get items list
+    axios.get('https://na1.api.riotgames.com/lol/static-data/v3/items', {
+        params: {
+            api_key: key
+        }
+    })
+    .then((response) => {
+        // Change to array
+        itemList = Object.values(response.data.data);
+    })
+    .catch((error) => {
+        console.log(error);
+    })
+}
+getItems();
 
 // // Get list of champs (rate limits on League API)
 // getChamps = () => {
