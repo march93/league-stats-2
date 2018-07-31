@@ -29,7 +29,6 @@ getChampions = () => {
         });
     });
 }
-// getChampions();
 
 // ITEMS
 getItems = () => {
@@ -49,7 +48,6 @@ getItems = () => {
         });
     });
 }
-// getItems();
 
 // SPELLS
 getSpells = () => {
@@ -57,6 +55,7 @@ getSpells = () => {
         // Call League API to get spells list
         axios.get('https://na1.api.riotgames.com/lol/static-data/v3/summoner-spells', {
             params: {
+                tags: 'image',
                 api_key: key
             }
         })
@@ -69,7 +68,6 @@ getSpells = () => {
         });
     });
 }
-// getSpells();
 
 // Resolve champs, items. spells promises
 Promise.all([getChampions(), getItems(), getSpells()])
@@ -124,17 +122,94 @@ getUserInfo = (userID, matchInfo) => {
         return parseInt(user.participantId) === parseInt(userObject.participantId);
     });
 
-    const champID = parseInt(userInfo.championId);
-
-    // Find champ name
-    var champObj = champList.find((champ) => {
-        return parseInt(champ.id) === champID;
+    // Resolve promises to get champion name, items bought, and spells used
+    Promise.all([
+        getChampName(parseInt(userInfo.championId)),
+        getItemsBought([
+            parseInt(userInfo.stats.item0),
+            parseInt(userInfo.stats.item1),
+            parseInt(userInfo.stats.item2),
+            parseInt(userInfo.stats.item3),
+            parseInt(userInfo.stats.item4),
+            parseInt(userInfo.stats.item5),
+            parseInt(userInfo.stats.item6)
+        ]),
+        getSpellsUsed([
+            parseInt(userInfo.spell1Id),
+            parseInt(userInfo.spell2Id)
+        ])
+    ])
+    .then((values) => {
+        userInfo.championName = values[0];
+        userInfo.itemsBought = values[1];
+        userInfo.spellsUsed = values[2];
+    })
+    .catch((error) => {
+        console.log(error);
     });
 
-    // Append champion name to result
-    userInfo.championName = champObj.name;
-
     return userInfo;
+}
+
+getChampName = (champID) => {
+    return promise = new Promise((resolve, reject) => {
+        // Find champ name
+        var champObj = champList.find((champ) => {
+            return parseInt(champ.id) === champID;
+        });
+
+        if (champObj) {
+            resolve(champObj.name);
+        } else {
+            reject("Champion Not Found");
+        }
+    });
+}
+
+getItemsBought = (items) => {
+    return promise = new Promise((resolve, reject) => {
+        const itemNameArr = items.map((item) => {
+            // No item used
+            if (item !== 0) {
+                const itemObj = itemList.find((i) => {
+                    return parseInt(i.id) === item;
+                });
+
+                return itemObj.name;
+            } else {
+                return "";
+            }
+        });
+
+        if (itemNameArr) {
+            resolve(itemNameArr);
+        } else {
+            reject("Cannot get items bought");
+        }
+    });
+}
+
+getSpellsUsed = (spells) => {
+    return promise = new Promise((resolve, reject) => {
+        const spellNameArr = spells.map((spell) => {
+            // No spell used
+            if (spell !== 0) {
+                const spellObj = spellsList.find((s) => {
+                    return parseInt(s.id) === spell;
+                });
+
+                return { spellName: spellObj.name, spellImage: spellObj.image.full };
+            } else {
+                return "";
+            }
+        });
+
+        if (spellNameArr) {
+            resolve(spellNameArr);
+        } else {
+            reject("Cannot get spells used");
+        }
+    });
 }
 
 app.get('/v1/api/getUserID', (req, res) => {
@@ -190,9 +265,7 @@ app.get('/v1/api/getMatches', (req, res) => {
                 })
                 .catch((error) => {
                     console.log(error);
-                })
-
-            // res.send(data);
+                });
         }
     })
     .catch((error) => {
