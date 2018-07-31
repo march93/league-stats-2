@@ -46,6 +46,22 @@ class Matchlist extends Component {
         })
     }
 
+    componentDidUpdate = () => {
+        axios.get('/v1/api/getMatches', {
+            params: {
+                matches: this.props.matches,
+                endIndex: this.props.endIndex,
+                userID: this.props.match.params.id
+            }
+        })
+        .then((response) => {
+            console.log(response.data);
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+    }
+
     render() {
         // Render nothing to the screen until componentDidMount is ready
         if (this.state.loading) {

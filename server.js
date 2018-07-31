@@ -9,34 +9,48 @@ const port = process.env.PORT || 5000;
 const key = process.env.REACT_APP_API_KEY;
 
 getMatchInfo = (userID, gameID) => {
-    axios.get('https://na1.api.riotgames.com/lol/match/v3/matches/' + gameID, {
-        params: {
-            api_key: key
-        }
-    })
+    return promise = new Promise((resolve, reject) => {
+        axios.get('https://na1.api.riotgames.com/lol/match/v3/matches/' + gameID, {
+            params: {
+                forAccountId: userID,
+                api_key: key
+            }
+        })
+        .then((response) => {
+            const matchData = {};
+
+            // Set game duration
+            matchData.gameDuration = response.data.gameDuration;
+
+            // Retrieve user match info
+            const userPromise = Promise.resolve(getUserInfo(userID, response.data));
+
+            userPromise.then((value) => {
+                resolve(value);
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+        })
+        .catch((error) => {
+            reject(error);
+        });
+    });
+}
+
+getUserInfo = (userID, matchInfo) => {
+    const userObject = matchInfo.participantIdentities.find((identity) => {
+        return parseInt(identity.player.accountId) === parseInt(userID);
+    });
+
+    const userInfo = matchInfo.participants.find((user) => {
+        return parseInt(user.participantId) === parseInt(userObject.participantId);
+    });
+
+    return userInfo;
 }
 
 app.get('/v1/api/getUserID', (req, res) => {
-    
-
-    // const promiseID = new Promise((resolve, reject) => {
-    //     axios.get('https://na1.api.riotgames.com/lol/summoner/v3/summoners/by-name/' + req.query.searchValue, {
-    //         params: {
-    //             api_key: key
-    //         }
-    //     })
-    //     .then((response) => {
-    //         resolve(response.data);
-    //     })
-    //     .catch((error) => {
-    //         console.log(error);
-    //     })
-    // });
-
-    // Promise.all([promiseID]).then((value) => {
-    //     console.log(value);
-    // });
-
     // Call League API to get user ID
     axios.get('https://na1.api.riotgames.com/lol/summoner/v3/summoners/by-name/' + req.query.searchValue, {
         params: {
@@ -73,17 +87,25 @@ app.get('/v1/api/getMatches', (req, res) => {
         if (response.data.matches.length === 0) {
             res.send(data);
         } else {
+            // promise array
+            const promiseArr = [];
+
             // Add match ID to data.matches array
-            response.data.matches.forEach((match) => {
-                data.matches.push(match.gameId);
-
-                // Get match info for each match ID
-
-
+            response.data.matches.map((match) => {
+                // Set each call into a promise array
+                promiseArr.push(getMatchInfo(data.ID, match.gameId));
             });
 
-            res.send(data);
+            // Resolve all promises
+            Promise.all(promiseArr).then((value) => {
+                res.send(value);
+            });
+
+            // res.send(data);
         }
+    })
+    .catch((error) => {
+        console.log(error);
     })
 });
 
