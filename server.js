@@ -8,6 +8,25 @@ const app = express();
 const port = process.env.PORT || 5000;
 const key = process.env.REACT_APP_API_KEY;
 
+getChampions = () => {
+    // Call League API to get champion name
+    axios.get('https://na1.api.riotgames.com/lol/static-data/v3/champions', {
+        params: {
+            api_key: key
+        }
+    })
+    .then((response) => {
+        console.log(response.data);
+        return response.data;
+    })
+    .catch((error) => {
+        console.log(error);
+    });
+}
+
+// let champions = getChampions();
+// console.log(champions);
+
 getMatchInfo = (userID, gameID) => {
     return promise = new Promise((resolve, reject) => {
         axios.get('https://na1.api.riotgames.com/lol/match/v3/matches/' + gameID, {
@@ -26,7 +45,8 @@ getMatchInfo = (userID, gameID) => {
             const userPromise = Promise.resolve(getUserInfo(userID, response.data));
 
             userPromise.then((value) => {
-                resolve(value);
+                matchData.participantInfo = value;
+                resolve(matchData);
             })
             .catch((error) => {
                 console.log(error);
@@ -39,10 +59,12 @@ getMatchInfo = (userID, gameID) => {
 }
 
 getUserInfo = (userID, matchInfo) => {
+    // Get user object based on participant ID
     const userObject = matchInfo.participantIdentities.find((identity) => {
         return parseInt(identity.player.accountId) === parseInt(userID);
     });
 
+    // Get user's match info
     const userInfo = matchInfo.participants.find((user) => {
         return parseInt(user.participantId) === parseInt(userObject.participantId);
     });
@@ -70,7 +92,7 @@ app.get('/v1/api/getMatches', (req, res) => {
     // Return 10 matches at a time
     axios.get('https://na1.api.riotgames.com/lol/match/v3/matchlists/by-account/' + req.query.userID, {
         params: {
-            beginIndex: req.query.endIndex - 10,
+            beginIndex: req.query.endIndex - 5,
             endIndex: req.query.endIndex,
             api_key: key
         }

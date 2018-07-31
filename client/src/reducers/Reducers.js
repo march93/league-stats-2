@@ -7,7 +7,7 @@ import {
 const initialState = {
     search: '',
     matches: [],
-    endIndex: 10
+    endIndex: 5
 };
 
 const rootReducer = (state = initialState, action) => {
