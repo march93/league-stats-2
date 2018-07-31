@@ -7,6 +7,7 @@ const axios = require('axios');
 const app = express();
 const port = process.env.PORT || 5000;
 const key = process.env.REACT_APP_API_KEY;
+let champList;
 
 getChampions = () => {
     // Call League API to get champion name
@@ -16,16 +17,27 @@ getChampions = () => {
         }
     })
     .then((response) => {
-        console.log(response.data);
-        return response.data;
+        champList = Object.values(response.data.data);
     })
     .catch((error) => {
         console.log(error);
     });
 }
+getChampions();
 
-// let champions = getChampions();
-// console.log(champions);
+// // Get list of champs (rate limits on League API)
+// getChamps = () => {
+//     axios.get('http://ddragon.leagueoflegends.com/cdn/6.24.1/data/en_US/championFull.json')
+//     .then((response) => {
+//         champList = response.data.keys;
+//         // console.log(response.data.keys, champList);
+//         // return response.data.keys;
+//     })
+//     .catch((error) => {
+//         console.log(error);
+//     })
+// }
+// getChamps();
 
 getMatchInfo = (userID, gameID) => {
     return promise = new Promise((resolve, reject) => {
@@ -68,6 +80,16 @@ getUserInfo = (userID, matchInfo) => {
     const userInfo = matchInfo.participants.find((user) => {
         return parseInt(user.participantId) === parseInt(userObject.participantId);
     });
+
+    const champID = parseInt(userInfo.championId);
+
+    // Find champ name
+    var champObj = champList.find((champ) => {
+        return parseInt(champ.id) === champID;
+    });
+
+    // Append champion name to result
+    userInfo.championName = champObj.name;
 
     return userInfo;
 }
