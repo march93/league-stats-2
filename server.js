@@ -9,54 +9,78 @@ const port = process.env.PORT || 5000;
 const key = process.env.REACT_APP_API_KEY;
 let champList;
 let itemList;
+let spellsList;
 
+// CHAMPS
 getChampions = () => {
-    // Call League API to get champion names
-    axios.get('https://na1.api.riotgames.com/lol/static-data/v3/champions', {
-        params: {
-            api_key: key
-        }
-    })
-    .then((response) => {
-        // Change to array
-        champList = Object.values(response.data.data);
+    return promise = new Promise((resolve, reject) => {
+        // Call League API to get champion names
+        axios.get('https://na1.api.riotgames.com/lol/static-data/v3/champions', {
+            params: {
+                api_key: key
+            }
+        })
+        .then((response) => {
+            // Change to array
+            resolve(Object.values(response.data.data));
+        })
+        .catch((error) => {
+            reject(error);
+        });
+    });
+}
+// getChampions();
+
+// ITEMS
+getItems = () => {
+    return promise = new Promise((resolve, reject) => {
+        // Call League API to get items list
+        axios.get('https://na1.api.riotgames.com/lol/static-data/v3/items', {
+            params: {
+                api_key: key
+            }
+        })
+        .then((response) => {
+            // Change to array
+            resolve(Object.values(response.data.data));
+        })
+        .catch((error) => {
+            reject(error);
+        });
+    });
+}
+// getItems();
+
+// SPELLS
+getSpells = () => {
+    return promise = new Promise((resolve, reject) => {
+        // Call League API to get spells list
+        axios.get('https://na1.api.riotgames.com/lol/static-data/v3/summoner-spells', {
+            params: {
+                api_key: key
+            }
+        })
+        .then((response) => {
+            // Change to array
+            resolve(Object.values(response.data.data));
+        })
+        .catch((error) => {
+            reject(error);
+        });
+    });
+}
+// getSpells();
+
+// Resolve champs, items. spells promises
+Promise.all([getChampions(), getItems(), getSpells()])
+    .then((values) => {
+        champList = values[0];
+        itemList = values[1];
+        spellsList = values[2];
     })
     .catch((error) => {
         console.log(error);
     });
-}
-getChampions();
-
-getItems = () => {
-    // Call League API to get items list
-    axios.get('https://na1.api.riotgames.com/lol/static-data/v3/items', {
-        params: {
-            api_key: key
-        }
-    })
-    .then((response) => {
-        // Change to array
-        itemList = Object.values(response.data.data);
-    })
-    .catch((error) => {
-        console.log(error);
-    })
-}
-getItems();
-
-// // Get list of champs (rate limits on League API)
-// getChamps = () => {
-//     axios.get('http://ddragon.leagueoflegends.com/cdn/6.24.1/data/en_US/championFull.json')
-//     .then((response) => {
-//         champList = response.data.keys;
-//         // console.log(response.data.keys, champList);
-//         // return response.data.keys;
-//     })
-//     .catch((error) => {
-//         console.log(error);
-//     })
-// }
-// getChamps();
 
 getMatchInfo = (userID, gameID) => {
     return promise = new Promise((resolve, reject) => {
@@ -160,9 +184,13 @@ app.get('/v1/api/getMatches', (req, res) => {
             });
 
             // Resolve all promises
-            Promise.all(promiseArr).then((value) => {
-                res.send(value);
-            });
+            Promise.all(promiseArr)
+                .then((value) => {
+                    res.send(value);
+                })
+                .catch((error) => {
+                    console.log(error);
+                })
 
             // res.send(data);
         }
