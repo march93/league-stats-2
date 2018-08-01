@@ -3,7 +3,7 @@
     margin: 20px auto;
 }
 
-.visible-content {
+.visible-content, .hidden-content {
     display: flex;
     justify-content: space-between;
 }
@@ -17,12 +17,12 @@
 
 .border-around {
     border: 1px solid lightgray;
-    padding: 2px;
+    padding: 2px 5px;
     border-radius: 10px;
     background-color: lightgray;
 }
 
-.champ-data {
+.champ-data, .items-data {
     display: flex;
     flex-direction: column;
 }
@@ -57,13 +57,25 @@
     background-color: lightcoral !important;
 }
 
+.spell-info, .item-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 10px 0;
+}
+
+.spell-info .spell-name, .item-info .item-name {
+    margin-left: 10px;
+}
+
 @media only screen and (max-width: 991px) {
-    .visible-content {
+    .visible-content, .hidden-content {
         flex-direction: column;
         align-items: center;
     }
 
-    .visible-content .KDA {
-        margin: 20px 0;
+    .visible-content .KDA, .items-data {
+        margin: 20px 0 !important;
     }
 }

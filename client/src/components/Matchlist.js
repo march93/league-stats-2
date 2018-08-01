@@ -9,18 +9,14 @@ import momentDurationFormatSetup from 'moment-duration-format';
 import classnames from 'classnames';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
-import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Collapse from '@material-ui/core/Collapse';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import red from '@material-ui/core/colors/red';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import ShareIcon from '@material-ui/icons/Share';
+import DoneIcon from '@material-ui/icons/Done';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 
 momentDurationFormatSetup(moment);
 
@@ -973,15 +969,47 @@ class Matchlist extends Component {
                             </div>
                         </CardActions>
                         <Collapse in={this.state.cardStatus.includes(index)} timeout="auto" unmountOnExit>
-                            <CardContent>
-                                <Typography component="div" className="spells-data">
-
+                            <CardContent className="hidden-content">
+                                <Typography component="div" className="spells-data border-around">
+                                    <h2>Spells Used</h2>
+                                    {card.participantInfo.spellsUsed.map(spell => (
+                                        <span className="spell-info">
+                                            <Avatar
+                                                aria-label="SpellImage"
+                                                className="spell-image"
+                                                alt="Spell"
+                                                src={SPELL_IMG + spell.spellImage}
+                                                >
+                                            </Avatar>
+                                            <span className="spell-name">
+                                                {spell.spellName}
+                                            </span>
+                                        </span>
+                                    ))}
                                 </Typography>
-                                <Typography component="div" className="items-data">
-
+                                <Typography component="div" className="items-data border-around">
+                                    <h2>Spells Used</h2>
+                                    {card.participantInfo.itemsBought.map(item => {
+                                        return (item !== "") ?
+                                            <span className="item-info">
+                                                <DoneIcon />
+                                                <span className="item-name">
+                                                    {item}
+                                                </span>
+                                            </span>
+                                            :
+                                            ""
+                                    })}
                                 </Typography>
-                                <Typography component="div" className="creep-data">
-
+                                <Typography component="div" className="creep-data border-around">
+                                    <div>
+                                        <h3 className="creep-score">
+                                            {"Total Creep Score: " + card.participantInfo.stats.totalMinionsKilled}
+                                        </h3>
+                                        <h3 className="creep-min">
+                                            {"Creeps Per Minute: " + (card.participantInfo.stats.totalMinionsKilled/moment.duration(card.gameDuration, "seconds").asMinutes()).toFixed(2)}
+                                        </h3>
+                                    </div>
                                 </Typography>
                             </CardContent>
                         </Collapse>
