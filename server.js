@@ -246,6 +246,7 @@ app.get('/v1/api/getMatches', (req, res) => {
         // Add User ID and Summoner Name to data object
         data.ID = req.query.userID;
         data.matches = [];
+        data.totalGames = response.data.totalGames;
 
         // If no recent matches are found, return matches as empty array
         if (response.data.matches.length === 0) {
@@ -263,7 +264,8 @@ app.get('/v1/api/getMatches', (req, res) => {
             // Resolve all promises
             Promise.all(promiseArr)
                 .then((value) => {
-                    res.send(value);
+                    data.matches = value;
+                    res.send(data);
                 })
                 .catch((error) => {
                     console.log(error);

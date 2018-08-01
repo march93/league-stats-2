@@ -69,6 +69,11 @@
     margin-left: 10px;
 }
 
+.more-button {
+    margin: 20px auto;
+    display: flex;
+}
+
 @media only screen and (max-width: 991px) {
     .visible-content, .hidden-content {
         flex-direction: column;

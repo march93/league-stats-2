@@ -2,19 +2,23 @@ import React, { Component } from 'react';
 import '../styles/Header.css';
 import axios from 'axios';
 import { connect } from "react-redux";
-import { searchValue } from '../actions/Actions';
+import { searchValue, updateEndIndex, updateID } from '../actions/Actions';
 import PropTypes from 'prop-types'
 import { withRouter } from 'react-router';
 
 const mapStateToProps = state => {
     return { 
-        search: state.search
+        search: state.search,
+        endIndex: state.endIndex,
+        id: state.id
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        searchValue: value => dispatch(searchValue(value))
+        searchValue: value => dispatch(searchValue(value)),
+        updateEndIndex: index => dispatch(updateEndIndex(index)),
+        updateID: id => dispatch(updateID(id))
     };
 };
 
@@ -63,6 +67,12 @@ class Header extends Component {
             .then((response) => {
                 // Store search value in redux
                 self.props.searchValue(self.state.searchValue);
+
+                // Update end index
+                this.props.updateEndIndex(5);
+
+                // Update ID
+                this.props.updateID(response.data.ID);
 
                 // Navigate to summoner info page
                 self.props.history.push('/matches/' + response.data.ID);
