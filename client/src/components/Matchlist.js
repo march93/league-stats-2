@@ -54,7 +54,6 @@ class Matchlist extends Component {
     componentDidMount = () => {
         axios.get('/v1/api/getMatches', {
             params: {
-                matches: this.props.matches,
                 endIndex: this.props.endIndex,
                 userID: this.props.match.params.id
             }
@@ -75,7 +74,6 @@ class Matchlist extends Component {
         if (prevProps.match.params.id !== this.props.match.params.id) {
             axios.get('/v1/api/getMatches', {
                 params: {
-                    matches: this.props.matches,
                     endIndex: 5,
                     userID: this.props.id
                 }
@@ -97,7 +95,6 @@ class Matchlist extends Component {
 
             axios.get('/v1/api/getMatches', {
                 params: {
-                    matches: this.props.matches,
                     endIndex: this.props.endIndex + 5,
                     userID: this.props.match.params.id
                 }
