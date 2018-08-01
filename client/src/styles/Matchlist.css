@@ -1,0 +1,69 @@
+.match-card {
+    width: 80%;
+    margin: 20px auto;
+}
+
+.visible-content {
+    display: flex;
+    justify-content: space-between;
+}
+
+.visible-content span {
+    font-size: 18px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+}
+
+.border-around {
+    border: 1px solid lightgray;
+    padding: 2px;
+    border-radius: 10px;
+    background-color: lightgray;
+}
+
+.champ-data {
+    display: flex;
+    flex-direction: column;
+}
+
+.kda-data {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.kda-ratio {
+    font-size: 20px !important;
+}
+
+.expand-details {
+    margin-left: auto !important;
+}
+
+.expand {
+    transform: rotate(0deg);
+}
+
+.expand-open {
+    transform: rotate(180deg);
+}
+
+.win-card {
+    background-color: lightblue !important;
+}
+
+.lose-card {
+    background-color: lightcoral !important;
+}
+
+@media only screen and (max-width: 991px) {
+    .visible-content {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .visible-content .KDA {
+        margin: 20px 0;
+    }
+}

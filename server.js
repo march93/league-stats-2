@@ -17,6 +17,7 @@ getChampions = () => {
         // Call League API to get champion names
         axios.get('https://na1.api.riotgames.com/lol/static-data/v3/champions', {
             params: {
+                tags: 'image',
                 api_key: key
             }
         })
@@ -140,6 +141,7 @@ getUserInfo = (userID, matchInfo) => {
         ])
     ])
     .then((values) => {
+        userInfo.userName = userObject.player.summonerName;
         userInfo.championName = values[0];
         userInfo.itemsBought = values[1];
         userInfo.spellsUsed = values[2];
@@ -154,12 +156,12 @@ getUserInfo = (userID, matchInfo) => {
 getChampName = (champID) => {
     return promise = new Promise((resolve, reject) => {
         // Find champ name
-        var champObj = champList.find((champ) => {
+        const champObj = champList.find((champ) => {
             return parseInt(champ.id) === champID;
         });
 
         if (champObj) {
-            resolve(champObj.name);
+            resolve({ champName: champObj.name, champImage: champObj.image.full });
         } else {
             reject("Champion Not Found");
         }
