@@ -3,9 +3,12 @@ require('dotenv').config();
 
 const express = require('express');
 const axios = require('axios');
+const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 5000;
+
+// League API Key
 const key = process.env.REACT_APP_API_KEY;
 let champList;
 let itemList;
@@ -276,5 +279,15 @@ app.get('/v1/api/getMatches', (req, res) => {
         console.log(error);
     })
 });
+
+if (process.env.NODE_ENV === 'production') {
+    // Serve any static files
+    app.use(express.static(path.join(__dirname, 'client/build')));
+
+    // Handle React routing, return all requests to React app
+    app.get('*', function(req, res) {
+        res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+    });
+}
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
